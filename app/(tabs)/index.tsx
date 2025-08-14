@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, Press
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import HomeworkScreen from "@/app/HomeworkScreen";
 
 const teacherName = "Teacher’s Name";
 
@@ -10,9 +11,9 @@ const features = [
     { label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/ManageAttendanceScreen' },
     { label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen' },
     { label: 'Students', image: require('@/assets/images/students.png'), route: '/ManageStudentsScreen' },
-    { label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ManageExamsScreen' },
+    { label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen' },
     { label: 'Results', image: require('@/assets/images/results.png'), route: '/ManageResultsScreen' },
-    { label: 'Homework', image: require('@/assets/images/homework.png'), route: '/ManageHomeworkScreen' },
+    { label: 'Homework', image: require('@/assets/images/homework.png'), route: '/HomeworkScreen' },
     { label: 'Events', image: require('@/assets/images/events.png'), route: '/ViewEventsScreen' },
 ];
 
