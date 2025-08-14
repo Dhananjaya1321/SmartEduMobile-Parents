@@ -41,7 +41,31 @@ export default function RootLayout() {
                 <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
                 <Stack.Screen
+                    name="ExaminationsDetailsScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ALExamScheduleScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="OLExamScheduleScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ScholarshipExamScheduleScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="SemesterExamScheduleScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="ViewEventsScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="HomeworkScreen"
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
