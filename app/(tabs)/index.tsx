@@ -1,27 +1,28 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, Pressable, ScrollView} from 'react-native';
+import {Ionicons} from '@expo/vector-icons';
+import {useRouter} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeworkScreen from "@/app/HomeworkScreen";
+import AttendanceScreen from "@/app/AttendanceScreen";
 
 const teacherName = "Teacher’s Name";
 
 const features = [
-    { label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/ManageAttendanceScreen' },
-    { label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen' },
-    { label: 'Students', image: require('@/assets/images/students.png'), route: '/ManageStudentsScreen' },
-    { label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen' },
-    { label: 'Results', image: require('@/assets/images/results.png'), route: '/ManageResultsScreen' },
-    { label: 'Homework', image: require('@/assets/images/homework.png'), route: '/HomeworkScreen' },
-    { label: 'Events', image: require('@/assets/images/events.png'), route: '/ViewEventsScreen' },
+    {label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/AttendanceScreen'},
+    {label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen'},
+    {label: 'Students', image: require('@/assets/images/students.png'), route: '/ManageStudentsScreen'},
+    {label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen'},
+    {label: 'Results', image: require('@/assets/images/results.png'), route: '/ManageResultsScreen'},
+    {label: 'Homework', image: require('@/assets/images/homework.png'), route: '/HomeworkScreen'},
+    {label: 'Events', image: require('@/assets/images/events.png'), route: '/ViewEventsScreen'},
 ];
 
 function formatData(data, numColumns) {
     const numberOfFullRows = Math.floor(data.length / numColumns);
     let numberOfElementsLastRow = data.length - numberOfFullRows * numColumns;
     while (numberOfElementsLastRow !== 0 && numberOfElementsLastRow !== numColumns) {
-        data.push({ label: `blank-${numberOfElementsLastRow}`, empty: true });
+        data.push({label: `blank-${numberOfElementsLastRow}`, empty: true});
         numberOfElementsLastRow++;
     }
     return data;
@@ -41,38 +42,56 @@ export default function HomeScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <View>
                     <Text style={styles.helloText}>Hello</Text>
                     <Text style={styles.teacherName}>{teacherName}</Text>
                 </View>
                 <TouchableOpacity onPress={() => setMenuVisible(true)}>
-                    <Ionicons name="menu" size={24} color="black" />
+                    <Ionicons name="menu" size={24} color="black"/>
                 </TouchableOpacity>
             </View>
 
             <Text style={styles.sectionTitle}>Academics</Text>
 
             <FlatList
-                data={formatData(features, 3)}
+                data={formatData(features, 2)}
                 keyExtractor={(item, index) => index.toString()}
                 numColumns={2}
-                renderItem={({ item }) => {
+                renderItem={({item}) => {
                     if (item.empty) {
-                        return <View style={[styles.card, styles.invisibleCard]} />;
+                        return <View style={[styles.card, styles.invisibleCard]}/>;
                     }
                     return (
                         <TouchableOpacity
                             style={styles.card}
                             onPress={() => item.route && router.push(item.route)}
                         >
-                            <Image source={item.image} style={styles.cardImage} />
+                            <Image source={item.image} style={styles.cardImage}/>
                             <Text style={styles.cardText}>{item.label}</Text>
                         </TouchableOpacity>
                     );
                 }}
             />
+
+            <View style={{display: "flex",marginTop:30, marginBottom:50}}>
+                <TouchableOpacity
+                    style={styles.specialCard}
+                    onPress={() => router.push('/')}
+                >
+                    <Image source={require('@/assets/images/applications.png')} style={styles.specialCardImage}/>
+                    <Text style={styles.specialCardText}>Exam Applications & NIC Processing</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.specialCard}
+                    onPress={() => router.push('/')}
+                >
+                    <Image source={require('@/assets/images/school.png')} style={styles.specialCardImage}/>
+                    <Text style={styles.specialCardText}>A/L School Selection & Admission</Text>
+                </TouchableOpacity>
+            </View>
+
 
             {/* Menu Modal */}
             <Modal
@@ -89,23 +108,45 @@ export default function HomeScreen() {
                     </View>
                 </Pressable>
             </Modal>
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-    helloText: { fontSize: 14, color: '#555' },
-    teacherName: { fontSize: 20, fontWeight: 'bold' },
-    sectionTitle: { fontSize: 18, fontWeight: 'bold', marginVertical: 20 },
-    grid: { gap: 10 },
-    card: { flex: 1, margin: 5, height: 150, borderRadius: 10, backgroundColor: '#fff',
+    container: {flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20},
+    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
+    helloText: {fontSize: 14, color: '#555'},
+    teacherName: {fontSize: 20, fontWeight: 'bold'},
+    sectionTitle: {fontSize: 18, fontWeight: 'bold', marginVertical: 20},
+    grid: {gap: 10},
+    card: {
+        flex: 1, margin: 5, height: 150, borderRadius: 10, backgroundColor: '#fff',
         alignItems: 'center', justifyContent: 'center', shadowColor: '#000',
-        shadowOpacity: 0.1, shadowRadius: 4, elevation: 3 },
-    cardImage: { height: 60, width: 60, resizeMode: 'contain', marginBottom: 8 },
-    cardText: { fontSize: 12, textAlign: 'center' },
-    invisibleCard: { backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0 },
+        shadowOpacity: 0.1, shadowRadius: 4, elevation: 3
+    },
+    specialCard: {
+        display: "flex",
+        flexDirection: "row",
+        gap: 5,
+        margin: 5,
+        height: 100,
+        borderRadius: 10,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3
+    },
+    specialCardText: {
+        fontSize: 12, textAlign: 'left',
+        paddingHorizontal:20
+    },
+    specialCardImage: {height: 60, width: 60, resizeMode: 'contain', marginBottom: 8, marginLeft:20},
+    cardImage: {height: 60, width: 60, resizeMode: 'contain', marginBottom: 8},
+    cardText: {fontSize: 12, textAlign: 'center'},
+    invisibleCard: {backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0},
     modalOverlay: {
         flex: 1,
         justifyContent: 'flex-end',
