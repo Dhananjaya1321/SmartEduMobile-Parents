@@ -27,7 +27,7 @@ export default function AttendanceScreen() {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.title}>Attendance</Text>
+                <Text style={styles.headerTitle}>Attendance</Text>
                 <Ionicons name="notifications-outline" size={24} color="black" />
             </View>
 
@@ -99,9 +99,9 @@ export default function AttendanceScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F6F9FC', padding: 20 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-    title: { fontSize: 20, fontWeight: 'bold' },
+    container: {flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20},
+    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50},
+    headerTitle: {fontSize: 18, fontWeight: '600'},
     dateContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#E0E0E0', padding: 10, borderRadius: 5, marginBottom: 20 },
     dateLabel: { flex: 1, color: 'gray' },
     date: { flex: 2, fontSize: 16, fontWeight: 'bold' },

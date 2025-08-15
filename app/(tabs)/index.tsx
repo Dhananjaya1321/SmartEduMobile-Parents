@@ -3,16 +3,13 @@ import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Modal, Pressa
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HomeworkScreen from "@/app/HomeworkScreen";
-import AttendanceScreen from "@/app/AttendanceScreen";
-import ExamResultsScreen from "@/app/ExamResultsScreen";
-import ProfileScreen from "@/app/ProfileScreen";
+
 
 const teacherName = "Teacher’s Name";
 
 const features = [
     {label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/AttendanceScreen'},
-    {label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen'},
+    {label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/TimeTableScreen'},
     {label: 'Student Profile', image: require('@/assets/images/students.png'), route: '/ProfileScreen'},
     {label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen'},
     {label: 'Results', image: require('@/assets/images/results.png'), route: '/ExamResultsScreen'},
@@ -78,7 +75,7 @@ export default function HomeScreen() {
                 }}
             />
 
-            <View style={{display: "flex",marginTop:30, marginBottom:50}}>
+            <View style={{display: "flex", marginTop: 30, marginBottom: 50}}>
                 <TouchableOpacity
                     style={styles.specialCard}
                     onPress={() => router.push('/')}
@@ -144,9 +141,9 @@ const styles = StyleSheet.create({
     },
     specialCardText: {
         fontSize: 12, textAlign: 'left',
-        paddingHorizontal:20
+        paddingHorizontal: 20
     },
-    specialCardImage: {height: 60, width: 60, resizeMode: 'contain', marginBottom: 8, marginLeft:20},
+    specialCardImage: {height: 60, width: 60, resizeMode: 'contain', marginBottom: 8, marginLeft: 20},
     cardImage: {height: 60, width: 60, resizeMode: 'contain', marginBottom: 8},
     cardText: {fontSize: 12, textAlign: 'center'},
     invisibleCard: {backgroundColor: 'transparent', elevation: 0, shadowOpacity: 0},

@@ -22,7 +22,7 @@ export default function ProfileScreen() {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="black"/>
                 </TouchableOpacity>
-                <Text style={styles.title}>Profile</Text>
+                <Text style={styles.headerTitle}>Profile</Text>
                 <Ionicons name="notifications-outline" size={24} color="black"/>
             </View>
 
@@ -180,9 +180,9 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {flex: 1, backgroundColor: '#F6F9FC', padding: 20},
-    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20},
-    title: {fontSize: 20, fontWeight: 'bold'},
+    container: {flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20},
+    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50},
+    headerTitle: {fontSize: 18, fontWeight: '600'},
     profileHeader: {alignItems: 'center', marginBottom: 20},
     profileImage: {width: 100, height: 100, borderRadius: 10},
     profileName: {fontSize: 18, fontWeight: 'bold', marginTop: 10},

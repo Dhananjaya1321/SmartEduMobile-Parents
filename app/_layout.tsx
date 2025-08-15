@@ -1,17 +1,18 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
+import {DarkTheme, DefaultTheme, ThemeProvider} from '@react-navigation/native';
+import {useFonts} from 'expo-font';
+import {Stack} from 'expo-router';
+import {StatusBar} from 'expo-status-bar';
 import 'react-native-reanimated';
-import { useEffect } from 'react';
+import {useEffect} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import {useRouter} from 'expo-router';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+import {useColorScheme} from '@/hooks/useColorScheme';
 import ViewEventsScreen from "@/app/ViewEventsScreen";
 import AttendanceScreen from "@/app/AttendanceScreen";
 import ExamResultsScreen from "@/app/ExamResultsScreen";
 import LettersAndCertificatesScreen from "@/app/LettersAndCertificatesScreen";
+import TimeTableScreen from "@/app/TimeTableScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -41,74 +42,78 @@ export default function RootLayout() {
     return (
         <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-                <Stack.Screen name="+not-found" />
+                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                <Stack.Screen name="+not-found"/>
                 <Stack.Screen
                     name="AttendanceScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="TimeTableScreen"
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ProfileScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="LettersAndCertificatesScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ExamResultsScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ExaminationsDetailsScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ALExamScheduleScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="OLExamScheduleScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ScholarshipExamScheduleScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="SemesterExamScheduleScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ViewEventsScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="HomeworkScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="LoginScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="RegisterScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ForgotPasswordScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="VerifyCodeScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
                 <Stack.Screen
                     name="ChangePasswordScreen"
-                    options={{ headerShown: false }}
+                    options={{headerShown: false}}
                 />
             </Stack>
-            <StatusBar style="auto" />
+            <StatusBar style="auto"/>
         </ThemeProvider>
     );
 }
