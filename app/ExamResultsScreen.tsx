@@ -2,12 +2,12 @@ import React from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Animated} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
-import {useNavigation} from "expo-router";
+import {useNavigation, useRouter} from "expo-router";
 import ScrollView = Animated.ScrollView;
 
 const features = [
     {label: 'G.C.E. Examinations Results', image: require('@/assets/images/results .png'), route: '/'},
-    {label: 'Semester Exam Results', image: require('@/assets/images/results .png'), route: '/'},
+    {label: 'Semester Exam Results', image: require('@/assets/images/results .png'), route: '/StudentReportScreen'},
     {label: 'Lead Board', image: require('@/assets/images/leadboard.png'), route: '/'},
 ];
 
@@ -22,6 +22,7 @@ function formatData(data, numColumns) {
 }
 export default function ExamResultsScreen() {
     const navigation = useNavigation();
+    const router = useRouter();
     return (
         <ScrollView style={styles.container}>
             {/* Header */}

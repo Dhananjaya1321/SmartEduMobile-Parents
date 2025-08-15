@@ -8,11 +8,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRouter} from 'expo-router';
 
 import {useColorScheme} from '@/hooks/useColorScheme';
-import ViewEventsScreen from "@/app/ViewEventsScreen";
-import AttendanceScreen from "@/app/AttendanceScreen";
-import ExamResultsScreen from "@/app/ExamResultsScreen";
-import LettersAndCertificatesScreen from "@/app/LettersAndCertificatesScreen";
-import TimeTableScreen from "@/app/TimeTableScreen";
+import StudentReportScreen from "@/app/StudentReportScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -46,6 +42,10 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found"/>
                 <Stack.Screen
                     name="AttendanceScreen"
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="StudentReportScreen"
                     options={{headerShown: false}}
                 />
                 <Stack.Screen
