@@ -9,6 +9,7 @@ import {useRouter} from 'expo-router';
 
 import {useColorScheme} from '@/hooks/useColorScheme';
 import StudentReportScreen from "@/app/StudentReportScreen";
+import GCEExamResultsScreen from "@/app/GCEExamResultsScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -42,6 +43,10 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found"/>
                 <Stack.Screen
                     name="AttendanceScreen"
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="GCEExamResultsScreen"
                     options={{headerShown: false}}
                 />
                 <Stack.Screen
