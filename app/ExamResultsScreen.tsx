@@ -8,7 +8,7 @@ import ScrollView = Animated.ScrollView;
 const features = [
     {label: 'G.C.E. Examinations Results', image: require('@/assets/images/results .png'), route: '/GCEExamResultsScreen'},
     {label: 'Semester Exam Results', image: require('@/assets/images/results .png'), route: '/StudentReportScreen'},
-    {label: 'Lead Board', image: require('@/assets/images/leadboard.png'), route: '/'},
+    {label: 'Lead Board', image: require('@/assets/images/leadboard.png'), route: '/LeaderBoard'},
 ];
 
 function formatData(data, numColumns) {
