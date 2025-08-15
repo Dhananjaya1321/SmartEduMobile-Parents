@@ -48,6 +48,10 @@ export default function RootLayout() {
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen
+                    name="ProfileScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
                     name="LettersAndCertificatesScreen"
                     options={{ headerShown: false }}
                 />

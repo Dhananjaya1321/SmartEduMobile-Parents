@@ -6,13 +6,14 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeworkScreen from "@/app/HomeworkScreen";
 import AttendanceScreen from "@/app/AttendanceScreen";
 import ExamResultsScreen from "@/app/ExamResultsScreen";
+import ProfileScreen from "@/app/ProfileScreen";
 
 const teacherName = "Teacher’s Name";
 
 const features = [
     {label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/AttendanceScreen'},
     {label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen'},
-    {label: 'Students', image: require('@/assets/images/students.png'), route: '/ManageStudentsScreen'},
+    {label: 'Student Profile', image: require('@/assets/images/students.png'), route: '/ProfileScreen'},
     {label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen'},
     {label: 'Results', image: require('@/assets/images/results.png'), route: '/ExamResultsScreen'},
     {label: 'Homework', image: require('@/assets/images/homework.png'), route: '/HomeworkScreen'},

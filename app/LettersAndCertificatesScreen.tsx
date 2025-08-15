@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import {useNavigation, useRouter} from 'expo-router';
 import {Dropdown} from "react-native-element-dropdown";
@@ -18,7 +18,7 @@ export default function LettersAndCertificatesScreen() {
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Ionicons name="arrow-back" size={24} color="black"/>
@@ -59,7 +59,7 @@ export default function LettersAndCertificatesScreen() {
                     <Text style={styles.requestText}>{request}</Text>
                 </View>
             ))}
-        </View>
+        </ScrollView>
     );
 }
 
