@@ -10,6 +10,8 @@ import { useRouter } from 'expo-router';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import ViewEventsScreen from "@/app/ViewEventsScreen";
 import AttendanceScreen from "@/app/AttendanceScreen";
+import ExamResultsScreen from "@/app/ExamResultsScreen";
+import LettersAndCertificatesScreen from "@/app/LettersAndCertificatesScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -43,6 +45,14 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found" />
                 <Stack.Screen
                     name="AttendanceScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="LettersAndCertificatesScreen"
+                    options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                    name="ExamResultsScreen"
                     options={{ headerShown: false }}
                 />
                 <Stack.Screen

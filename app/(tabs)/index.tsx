@@ -5,6 +5,7 @@ import {useRouter} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HomeworkScreen from "@/app/HomeworkScreen";
 import AttendanceScreen from "@/app/AttendanceScreen";
+import ExamResultsScreen from "@/app/ExamResultsScreen";
 
 const teacherName = "Teacher’s Name";
 
@@ -13,9 +14,10 @@ const features = [
     {label: 'Timetable', image: require('@/assets/images/timetable.png'), route: '/ManageTimetableScreen'},
     {label: 'Students', image: require('@/assets/images/students.png'), route: '/ManageStudentsScreen'},
     {label: 'Exams', image: require('@/assets/images/exams.png'), route: '/ExaminationsDetailsScreen'},
-    {label: 'Results', image: require('@/assets/images/results.png'), route: '/ManageResultsScreen'},
+    {label: 'Results', image: require('@/assets/images/results.png'), route: '/ExamResultsScreen'},
     {label: 'Homework', image: require('@/assets/images/homework.png'), route: '/HomeworkScreen'},
     {label: 'Events', image: require('@/assets/images/events.png'), route: '/ViewEventsScreen'},
+    {label: 'Letters', image: require('@/assets/images/letter.png'), route: '/LettersAndCertificatesScreen'},
 ];
 
 function formatData(data, numColumns) {
