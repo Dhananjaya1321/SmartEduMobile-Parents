@@ -1,23 +1,49 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, Image, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
+import studentAPIController from "@/controllers/StudentController";
 
 export default function ProfileScreen() {
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState('Information');
-    const [motherContact, setMotherContact] = useState('');
-    const [fatherContact, setFatherContact] = useState('');
-    const [address, setAddress] = useState('');
-    const studentName = 'Student Name';
+    const [activeTab, setActiveTab] = useState<'Information' | 'Achievements'>('Information');
 
-    const handleUpdate = () => {
-        // Add logic to save updates (e.g., API call)
-        alert('Profile updated successfully!');
-    };
+    const currentYear = new Date().getFullYear();
+    const [loading, setLoading] = useState(true);
+    const [student, setStudent] = useState<any>(null);
+
+    useEffect(() => {
+
+        const fetchStudent = async () => {
+            setLoading(true);
+            const data = await studentAPIController.findStudentToParent();
+            if (data) {
+                setStudent(data);
+            }
+            setLoading(false);
+        };
+        fetchStudent();
+    }, []);
+
+    if (loading) {
+        return (
+            <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+                <ActivityIndicator size="large" color="#607D8B"/>
+            </View>
+        );
+    }
+
+    if (!student) {
+        return (
+            <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+                <Text>Failed to load student data.</Text>
+            </View>
+        );
+    }
 
     return (
         <ScrollView style={styles.container}>
+            {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="black"/>
@@ -26,14 +52,16 @@ export default function ProfileScreen() {
                 <Ionicons name="notifications-outline" size={24} color="black"/>
             </View>
 
+            {/* Profile Image + Name */}
             <View style={styles.profileHeader}>
                 <Image
-                    source={require('@/assets/images/character.png')} // Replace with actual image path
+                    source={require('@/assets/images/character.png')}
                     style={styles.profileImage}
                 />
-                <Text style={styles.profileName}>{studentName}</Text>
+                <Text style={styles.profileName}>{student?.fullNameWithInitials || "Unknown Student"}</Text>
             </View>
 
+            {/* Tabs */}
             <View style={styles.tabs}>
                 <TouchableOpacity onPress={() => setActiveTab('Information')}>
                     <Text style={[styles.tab, activeTab === 'Information' && styles.activeTab]}>Information</Text>
@@ -43,6 +71,7 @@ export default function ProfileScreen() {
                 </TouchableOpacity>
             </View>
 
+            {/* Achievements Tab */}
             {activeTab === 'Achievements' && (
                 <View>
                     <Text style={styles.sectionTitle}>Batches</Text>
@@ -59,118 +88,106 @@ export default function ProfileScreen() {
                 </View>
             )}
 
+            {/* Information Tab */}
             {activeTab === 'Information' && (
                 <View>
+                    {/* Grade + Class */}
                     <View style={styles.infoRow}>
                         <View style={styles.infoBox}>
                             <Text style={styles.infoLabel}>Current Grade</Text>
                             <View style={styles.infoValueBox}>
-                                <Text style={styles.infoValue}>Grade - 10</Text>
+                                <Text style={styles.infoValue}>Grade-{student.gradeName || "N/A"}</Text>
                             </View>
                         </View>
                         <View style={styles.infoBox}>
                             <Text style={styles.infoLabel}>Current Class</Text>
                             <View style={styles.infoValueBox}>
-                                <Text style={styles.infoValue}>Class - A</Text>
+                                <Text style={styles.infoValue}>{student.className || "N/A"}</Text>
                             </View>
                         </View>
                     </View>
 
+                    {/* Dates */}
                     <View style={styles.infoRow}>
                         <View style={styles.infoBox}>
                             <Text style={styles.infoLabel}>Entered date</Text>
                             <View style={styles.infoValueBox}>
-                                <Text style={styles.infoValue}>2025/01/12</Text>
+                                <Text style={styles.infoValue}>{student.entryDate || "N/A"}</Text>
                             </View>
                         </View>
                         <View style={styles.infoBox}>
                             <Text style={styles.infoLabel}>Current year</Text>
                             <View style={styles.infoValueBox}>
-                                <Text style={styles.infoValue}>2021</Text>
+                                <Text style={styles.infoValue}>{currentYear}</Text>
                             </View>
                         </View>
                     </View>
 
+                    {/* Registration Number */}
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Registration Number</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>504663-05-5055</Text>
+                            <Text style={styles.infoValue}>{student.registrationNumber || "N/A"}</Text>
                         </View>
                     </View>
 
                     <Text style={styles.sectionTitle}>Student Basic Information</Text>
 
                     <View style={styles.infoBox}>
-                        <Text style={styles.infoLabel}>Date the student entered school</Text>
-                        <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>2025/01/12</Text>
-                        </View>
-                    </View>
-                    <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Student Name</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>{studentName}</Text>
+                            <Text style={styles.infoValue}>{student.fullName || "N/A"}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Full Name with Initial</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>{studentName}</Text>
+                            <Text style={styles.infoValue}>{student.fullNameWithInitials || "N/A"}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Birth of Date</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>2025/01/12</Text>
+                            <Text style={styles.infoValue}>{student.dateOfBirth || "N/A"}</Text>
                         </View>
                     </View>
-
 
                     <Text style={styles.sectionTitle}>Parents Details</Text>
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Mother's Name</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>Geetha Kumari</Text>
+                            <Text style={styles.infoValue}>{student.motherName || "N/A"}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Mother's Contact Number</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>{motherContact || 'N/A'}</Text>
+                            <Text style={styles.infoValue}>{student.motherContact || "N/A"}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Father's Name</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>Ashantha Gayan</Text>
+                            <Text style={styles.infoValue}>{student.fatherName || "N/A"}</Text>
                         </View>
                     </View>
 
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Father's Contact Number</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>{fatherContact || 'N/A'}</Text>
+                            <Text style={styles.infoValue}>{student.fatherContact || "N/A"}</Text>
                         </View>
                     </View>
-
 
                     <Text style={styles.sectionTitle}>Address</Text>
                     <View style={styles.infoBox}>
                         <Text style={styles.infoLabel}>Address</Text>
                         <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>{address || 'N/A'}</Text>
-                        </View>
-                    </View>
-
-                    <Text style={styles.sectionTitle}>Other Details</Text>
-                    <View style={styles.infoBox}>
-                        <Text style={styles.infoLabel}>Student Registration Number</Text>
-                        <View style={styles.infoValueBox}>
-                            <Text style={styles.infoValue}>504663-05-5055</Text>
+                            <Text style={styles.infoValue}>{student.address || "N/A"}</Text>
                         </View>
                     </View>
                 </View>
