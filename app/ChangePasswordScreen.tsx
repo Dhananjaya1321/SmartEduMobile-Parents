@@ -6,29 +6,47 @@ import {
     StyleSheet,
     ScrollView,
     ImageBackground,
-    Alert
+    Alert,
+    ActivityIndicator,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import loginAPIController from "@/controllers/LoginController";
 
 export default function ChangePasswordScreen() {
     const [newPassword, setNewPassword] = useState('');
     const [confirmNewPassword, setConfirmNewPassword] = useState('');
-    const router = useRouter();
+    const [loading, setLoading] = useState(false);
 
-    const handleSubmit = () => {
+    const router = useRouter();
+    const { email } = useLocalSearchParams<{ email: string }>(); // email passed from VerifyCodeScreen
+
+    const handleSubmit = async () => {
         if (!newPassword || !confirmNewPassword) {
             Alert.alert('Error', 'Please fill in both password fields');
             return;
         }
 
-        if (newPassword === confirmNewPassword) {
-            Alert.alert('Success', 'Password changed successfully', [
-                { text: 'OK', onPress: () => router.push('/LoginScreen') }
-            ]);
-        } else {
+        if (newPassword !== confirmNewPassword) {
             Alert.alert('Error', 'Passwords do not match');
             setNewPassword('');
             setConfirmNewPassword('');
+            return;
+        }
+
+        if (!email) {
+            Alert.alert('Error', 'Email not found. Please restart the reset process.');
+            return;
+        }
+        console.log("dsd")
+
+        setLoading(true);
+        const success = await loginAPIController.updatePassword(newPassword, email);
+        setLoading(false);
+
+        if (success) {
+            router.replace('/LoginScreen')
+        } else {
+            Alert.alert('Error', 'Failed to update password. Try again.');
         }
     };
 
@@ -40,7 +58,9 @@ export default function ChangePasswordScreen() {
         >
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.title}>Change Password</Text>
-                <Text style={styles.subtitle}>Create a new password for your account</Text>
+                <Text style={styles.subtitle}>
+                    Create a new password for your account
+                </Text>
 
                 <TextInput
                     style={styles.input}
@@ -62,8 +82,16 @@ export default function ChangePasswordScreen() {
                     autoCapitalize="none"
                 />
 
-                <TouchableOpacity style={styles.resetButton} onPress={handleSubmit}>
-                    <Text style={styles.resetButtonText}>Save</Text>
+                <TouchableOpacity
+                    style={styles.resetButton}
+                    onPress={handleSubmit}
+                    disabled={loading}
+                >
+                    {loading ? (
+                        <ActivityIndicator color="#fff" />
+                    ) : (
+                        <Text style={styles.resetButtonText}>Save</Text>
+                    )}
                 </TouchableOpacity>
             </ScrollView>
         </ImageBackground>
