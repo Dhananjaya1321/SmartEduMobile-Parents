@@ -12,6 +12,28 @@ const examAPIController = {
             return null;
         }
     },
+    getALExams: async () => {
+        try {
+            const response = await apiClient.get(`/exams/grade/al-exams/to-parents`);
+            if (response.status === 200 && response.data.state === "OK") {
+                return response.data.data;
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    },
+    getOLExams: async () => {
+        try {
+            const response = await apiClient.get(`/exams/grade/ol-exams/to-parents`);
+            if (response.status === 200 && response.data.state === "OK") {
+                return response.data.data;
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    },
 };
 
 export default examAPIController;
