@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, FlatList, TouchableOpacity, Image, Animated} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {useNavigation} from "expo-router";
 import ScrollView = Animated.ScrollView;
+import eventAPIController from "@/controllers/EventController";
+import examAPIController from "@/controllers/ExamController";
 
 
 export default function ExaminationsDetailsScreen() {
     const navigation = useNavigation();
+
     return (
         <ScrollView style={styles.container}>
             {/* Header */}
