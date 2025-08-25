@@ -3,14 +3,23 @@ import {View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityInd
 import {Ionicons} from '@expo/vector-icons';
 import {useRouter} from 'expo-router';
 import studentAPIController from "@/controllers/StudentController";
+import achievementAPIController from "@/controllers/AchievementAPIController";
 
 export default function ProfileScreen() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<'Information' | 'Achievements'>('Information');
-
+    const [achievements, setAchievements] = useState<any[]>([]);
     const currentYear = new Date().getFullYear();
     const [loading, setLoading] = useState(true);
     const [student, setStudent] = useState<any>(null);
+
+    const fetchAchievements = async () => {
+        const response = await achievementAPIController.getAchievementsByStudentId(student.id);
+        if (response) {
+            setAchievements(response);
+        }
+    };
+
 
     useEffect(() => {
 
@@ -24,6 +33,18 @@ export default function ProfileScreen() {
         };
         fetchStudent();
     }, []);
+
+    useEffect(() => {
+        const fetchAchievements = async () => {
+            if (student && student.id) {
+                const response = await achievementAPIController.getAchievementsByStudentId(student.id);
+                if (response) {
+                    setAchievements(response);
+                }
+            }
+        };
+        fetchAchievements();
+    }, [student]);
 
     if (loading) {
         return (
@@ -74,17 +95,28 @@ export default function ProfileScreen() {
             {/* Achievements Tab */}
             {activeTab === 'Achievements' && (
                 <View>
-                    <Text style={styles.sectionTitle}>Batches</Text>
-                    <View style={styles.infoItem}/>
-
-                    <Text style={styles.sectionTitle}>Education Achievements</Text>
-                    <View style={styles.infoItem}/>
-
-                    <Text style={styles.sectionTitle}>Sport Achievements</Text>
-                    <View style={styles.infoItem}/>
-
-                    <Text style={styles.sectionTitle}>Participated Projects</Text>
-                    <View style={styles.infoItem}/>
+                    {achievements.length > 0 ? (
+                        achievements.map((ach) => (
+                            <View key={ach.id} style={styles.achievementCard}>
+                                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                                    <Text style={styles.achievementTitle}>{ach.name} ({ach.place} PLACE)</Text>
+                                </View>
+                                <Text style={styles.achievementDesc}>
+                                    {ach.description} ({ach.level})
+                                </Text>
+                                <Text style={styles.achievementMeta}>
+                                    <Text style={{fontWeight: "bold"}}>Category: </Text>{ach.category}
+                                </Text>
+                                <Text style={styles.achievementMeta}>
+                                    <Text style={{fontWeight: "bold"}}>Date: </Text>{ach.date}
+                                </Text>
+                            </View>
+                        ))
+                    ) : (
+                        <Text style={{textAlign: "center", color: "#555", marginTop: 20}}>
+                            No achievements recorded
+                        </Text>
+                    )}
                 </View>
             )}
 
@@ -224,4 +256,30 @@ const styles = StyleSheet.create({
     infoLabel: {fontSize: 14, color: '#555', marginBottom: 5},
     infoValueBox: {backgroundColor: '#E0E0E0', borderRadius: 5, padding: 10},
     infoValue: {fontSize: 16, fontWeight: 'bold', textAlign: 'center'},
+    achievementCard: {
+        backgroundColor: "#fff",
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 15,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    achievementTitle: {
+        fontSize: 16,
+        fontWeight: "bold",
+        marginBottom: 5,
+    },
+    achievementDesc: {
+        fontSize: 14,
+        color: "#555",
+        marginBottom: 5,
+    },
+    achievementMeta: {
+        fontSize: 13,
+        color: "#777",
+    },
+
 });
