@@ -138,32 +138,6 @@ export default function LeaderBoard() {
                 <Ionicons name="notifications-outline" size={24} color="black" />
             </View>
 
-            {/* Dropdown for Rank Levels */}
-            <View style={styles.gradeBox}>
-                <Text style={styles.labelDropDown}>Exam</Text>
-                <View style={styles.inputBox}>
-                    <Dropdown
-                        style={styles.dropdown}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        iconStyle={styles.iconStyle}
-                        data={[
-                            { label: "Class Ranks", value: "Class Ranks" },
-                            { label: "School Ranks", value: "School Ranks" },
-                            { label: "Zonal Ranks", value: "Zonal Ranks" },
-                            { label: "District Ranks", value: "District Ranks" },
-                            { label: "Province Ranks", value: "Province Ranks" },
-                            { label: "Island Ranks", value: "Island Ranks" },
-                        ]}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        value={rankLevel}
-                        onChange={(item) => setRankLevel(item.value)}
-                    />
-                </View>
-            </View>
-
             {/* Header Row */}
             <View style={styles.headerRow}>
                 <Text style={styles.headerList}>Photo</Text>
@@ -179,9 +153,6 @@ export default function LeaderBoard() {
                 showsVerticalScrollIndicator={false}
             />
 
-            <TouchableOpacity style={styles.downloadButton}>
-                <Text style={styles.downloadButtonText}>Download Report</Text>
-            </TouchableOpacity>
         </View>
     );
 }

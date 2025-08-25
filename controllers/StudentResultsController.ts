@@ -12,7 +12,7 @@ const studentResultsAPIController = {
             return null;
         }
     },
-    getMyChildData: async (examId:any) => {
+    getMyChildData: async (examId: any) => {
         try {
             const response = await apiClient.get(`/results/student-class/my-child/to-parents/${examId}`);
             if (response.status === 200 && response.data.state === "OK") {
@@ -26,6 +26,17 @@ const studentResultsAPIController = {
     getStudentsResultsDetails: async () => {
         try {
             const response = await apiClient.get(`/results/student-report/to-parents`);
+            if (response.status === 200 && response.data.state === "OK") {
+                return response.data.data;
+            }
+            return null;
+        } catch (error) {
+            return null;
+        }
+    },
+    getNationalLevelExamsResults: async (indexNumber: any, examName: any, year: any,) => {
+        try {
+            const response = await apiClient.get(`/results/national-level-exams-results/to-parents/${indexNumber}/${examName}/${year}`);
             if (response.status === 200 && response.data.state === "OK") {
                 return response.data.data;
             }
