@@ -79,7 +79,7 @@ export default function HomeScreen() {
             <View style={{display: "flex", marginTop: 30, marginBottom: 50}}>
                 <TouchableOpacity
                     style={styles.specialCard}
-                    onPress={() => router.push('/')}
+                    onPress={() => router.push('/NICAndApplicationStatusScreen')}
                 >
                     <Image source={require('@/assets/images/applications.png')} style={styles.specialCardImage}/>
                     <Text style={styles.specialCardText}>Exam Applications & NIC Processing</Text>
