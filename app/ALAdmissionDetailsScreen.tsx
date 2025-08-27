@@ -34,7 +34,7 @@ export default function ALAdmissionDetailsScreen() {
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.card}
-                        onPress={() => navigation.navigate('OLExamScheduleScreen')}
+                        onPress={() => navigation.navigate('AdmissionStatusScreen')}
                     >
                         <Image source={require('@/assets/images/applications.png')} style={styles.cardImage}/>
                         <Text style={styles.cardText}>View applications status</Text>

@@ -191,7 +191,8 @@ export default function ALAdmissionScreen() {
                         iconStyle={{width: 20, height: 20}}
                         data={[
                             {label: "Select stream", value: ""},
-                            {label: "Science", value: "Science"},
+                            {label: "Bio", value: "Bio"},
+                            {label: "Maths", value: "Maths"},
                             {label: "Commerce", value: "Commerce"},
                             {label: "Tech", value: "Tech"},
                             {label: "Arts", value: "Arts"},

@@ -13,6 +13,7 @@ import GCEExamResultsScreen from "@/app/GCEExamResultsScreen";
 import LeaderBoard from "@/app/LeaderBoard";
 import NICAndApplicationStatusScreen from "@/app/NICAndApplicationStatusScreen";
 import ALAdmissionDetailsScreen from "@/app/ALAdmissionDetailsScreen";
+import AdmissionStatusScreen from "@/app/AdmissionStatusScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -50,6 +51,10 @@ export default function RootLayout() {
                 />
                 <Stack.Screen
                     name="ALAdmissionScreen"
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="AdmissionStatusScreen"
                     options={{headerShown: false}}
                 />
                 <Stack.Screen
