@@ -86,7 +86,7 @@ export default function HomeScreen() {
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.specialCard}
-                    onPress={() => router.push('/')}
+                    onPress={() => router.push('/ALAdmissionDetailsScreen')}
                 >
                     <Image source={require('@/assets/images/school.png')} style={styles.specialCardImage}/>
                     <Text style={styles.specialCardText}>A/L School Selection & Admission</Text>

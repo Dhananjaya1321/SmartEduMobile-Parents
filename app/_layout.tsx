@@ -12,6 +12,7 @@ import StudentReportScreen from "@/app/StudentReportScreen";
 import GCEExamResultsScreen from "@/app/GCEExamResultsScreen";
 import LeaderBoard from "@/app/LeaderBoard";
 import NICAndApplicationStatusScreen from "@/app/NICAndApplicationStatusScreen";
+import ALAdmissionDetailsScreen from "@/app/ALAdmissionDetailsScreen";
 
 export default function RootLayout() {
     const colorScheme = useColorScheme();
@@ -45,6 +46,14 @@ export default function RootLayout() {
                 <Stack.Screen name="+not-found"/>
                 <Stack.Screen
                     name="AttendanceScreen"
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="ALAdmissionScreen"
+                    options={{headerShown: false}}
+                />
+                <Stack.Screen
+                    name="ALAdmissionDetailsScreen"
                     options={{headerShown: false}}
                 />
                 <Stack.Screen
