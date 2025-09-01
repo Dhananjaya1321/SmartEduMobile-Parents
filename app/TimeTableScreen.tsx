@@ -1,32 +1,86 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, FlatList, ScrollView} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TouchableOpacity,
+    ScrollView,
+    ActivityIndicator,
+} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {useRouter} from "expo-router";
+import {useRouter} from 'expo-router';
+import classTimetablesAPIController from '@/controllers/ClassTimetablesController';
 
 export default function TimeTableScreen() {
-    const [expandedDay, setExpandedDay] = useState('Tuesday'); // default open day
+    const [expandedDay, setExpandedDay] = useState<string | null>('Monday');
+    const [loading, setLoading] = useState(true);
+    const [timeTableData, setTimeTableData] = useState<any>({});
     const router = useRouter();
-    const timeTableData = {
-        Monday: [],
-        Tuesday: [
-            {time: '08:30 A.M. - 09:05 A.M.', subject: 'Sinhala'},
-            {time: '09:05 A.M. - 09:40 A.M.', subject: 'English'},
-            {time: '09:40 A.M. - 10:15 A.M.', subject: 'Mathematics'},
-            {time: '10:15 A.M. - 10:50 A.M.', subject: 'Commerce'},
-            {time: '10:50 A.M. - 11:10 A.M.', subject: 'Interval', highlight: true},
-            {time: '11:10 A.M. - 11:45 A.M.', subject: 'History'},
-            {time: '11:45 A.M. - 12:20 P.M.', subject: 'History'},
-            {time: '12:20 P.M. - 12:55 P.M.', subject: 'Science'},
-            {time: '12:55 P.M. - 01:30 P.M.', subject: 'ICT'},
-        ],
-        Wednesday: [],
-        Thursday: [],
-        Friday: [],
-    };
 
-    const toggleDay = (day) => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const res = await classTimetablesAPIController.findTimetableToParent();
+
+                // Prepare empty structure
+                const mappedData: Record<string, any[]> = {
+                    Monday: [],
+                    Tuesday: [],
+                    Wednesday: [],
+                    Thursday: [],
+                    Friday: [],
+                };
+
+                res.timetablePeriods.forEach((periodObj: any) => {
+                    const periodTime = getPeriodTime(periodObj.period);
+
+                    // Each slot corresponds to a weekday
+                    const weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
+
+                    weekdays.forEach((day, idx) => {
+                        const slot = periodObj.slots[idx];
+                        if (slot) {
+                            mappedData[day].push({
+                                time: periodTime,
+                                subject: slot.subject,
+                                teacher: slot.teacherName,
+                            });
+                        }
+
+                        if (periodObj.period === 4) {
+                            mappedData[day].push({
+                                time: '10:50 - 11:10',
+                                subject: 'Interval',
+                                teacher: '',
+                                highlight: true,
+                            });
+                        }
+                    });
+
+
+                });
+
+                setTimeTableData(mappedData);
+            } catch (error) {
+                console.error('Error fetching timetable:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchData();
+    }, []);
+
+    const toggleDay = (day: string) => {
         setExpandedDay(expandedDay === day ? null : day);
     };
+
+    if (loading) {
+        return (
+            <View style={styles.loaderContainer}>
+                <ActivityIndicator size="large" color="#000"/>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
@@ -39,15 +93,11 @@ export default function TimeTableScreen() {
                 <Ionicons name="notifications-outline" size={24} color="black"/>
             </View>
 
-
             <ScrollView showsVerticalScrollIndicator={false}>
                 {Object.keys(timeTableData).map((day) => (
                     <View key={day} style={styles.dayContainer}>
                         {/* Day Header */}
-                        <TouchableOpacity
-                            style={styles.dayHeader}
-                            onPress={() => toggleDay(day)}
-                        >
+                        <TouchableOpacity style={styles.dayHeader} onPress={() => toggleDay(day)}>
                             <Text style={styles.dayTitle}>{day}</Text>
                             <Ionicons
                                 name={expandedDay === day ? 'remove-circle-outline' : 'add-circle-outline'}
@@ -62,19 +112,24 @@ export default function TimeTableScreen() {
                                 <View style={styles.tableHeader}>
                                     <Text style={styles.tableHeaderText}>Time</Text>
                                     <Text style={styles.tableHeaderText}>Subject</Text>
+                                    <Text style={styles.tableHeaderText}>Teacher</Text>
                                 </View>
                                 {timeTableData[day].map((item, index) => (
                                     <View
                                         key={index}
                                         style={[
                                             styles.tableRow,
-                                            item.highlight && styles.intervalRow
+                                            item.highlight && { backgroundColor: '#FFF3CD' }, // light yellow highlight
                                         ]}
                                     >
                                         <Text style={styles.tableCell}>{item.time}</Text>
-                                        <Text style={styles.tableCell}>{item.subject}</Text>
+                                        <Text style={[styles.tableCell, item.highlight && { fontWeight: 'bold' }]}>
+                                            {item.subject}
+                                        </Text>
+                                        <Text style={styles.tableCell}>{item.teacher}</Text>
                                     </View>
                                 ))}
+
                             </View>
                         )}
                     </View>
@@ -84,10 +139,31 @@ export default function TimeTableScreen() {
     );
 }
 
+// Helper: Map period → time slots
+function getPeriodTime(period: number) {
+    const times = {
+        1: '08:30 - 09:05',
+        2: '09:05 - 09:40',
+        3: '09:40 - 10:15',
+        4: '10:15 - 10:50',
+        5: '11:10 - 11:45',
+        6: '11:45 - 12:20',
+        7: '12:20 - 12:55',
+        8: '12:55 - 01:30',
+    };
+    return times[period] || 'N/A';
+}
+
 const styles = StyleSheet.create({
     container: {flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20},
-    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50},
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 30,
+    },
     headerTitle: {fontSize: 18, fontWeight: '600'},
+    loaderContainer: {flex: 1, justifyContent: 'center', alignItems: 'center'},
     dayContainer: {marginBottom: 10},
     dayHeader: {
         flexDirection: 'row',
@@ -95,40 +171,23 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         borderRadius: 10,
-        alignItems: 'center'
+        alignItems: 'center',
     },
     dayTitle: {fontSize: 16, fontWeight: 'bold'},
-    table: {
-        backgroundColor: '#fff',
-        borderRadius: 10,
-        marginTop: 5,
-        overflow: 'hidden'
-    },
+    table: {backgroundColor: '#fff', borderRadius: 10, marginTop: 5, overflow: 'hidden'},
     tableHeader: {
         flexDirection: 'row',
         backgroundColor: '#F0F0F0',
         padding: 10,
-        display:"flex",
-        alignItems:"center",
-        justifyContent:"space-around"
+        justifyContent: 'space-around',
     },
-    tableHeaderText: {
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        fontWeight: 'bold'
-    },
+    tableHeaderText: {flex: 1, fontWeight: 'bold', textAlign: 'center'},
     tableRow: {
-        display:"flex",
-        alignItems:"center",
-        justifyContent:"space-around",
         flexDirection: 'row',
         padding: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee'
+        borderBottomColor: '#eee',
+        justifyContent: 'space-around',
     },
-    tableCell: {flex: 1},
-    intervalRow: {
-        backgroundColor: '#EAF3FF'
-    }
+    tableCell: {flex: 1, textAlign: 'center'},
 });

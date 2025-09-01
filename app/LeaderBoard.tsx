@@ -1,52 +1,132 @@
-import React, { useState } from 'react';
-import {View, Text, FlatList, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {Ionicons} from "@expo/vector-icons";
-import {useNavigation} from "expo-router";
-import {Dropdown} from "react-native-element-dropdown";
+import React, { useState, useEffect } from "react";
+import {
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    ActivityIndicator,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { useLocalSearchParams, useRouter, useNavigation } from "expo-router";
+import { Dropdown } from "react-native-element-dropdown";
+import studentResultsAPIController from "@/controllers/StudentResultsController";
 
-// Sample leaderboard data
-const sampleData = [
-    { id: 1, name: 'Student Name', rank: 15, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=1' },
-    { id: 2, name: 'Student Name', rank: 1, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=2' },
-    { id: 3, name: 'Student Name', rank: 2, trend: 'down', photoUrl: 'https://i.pravatar.cc/150?img=3' },
-    { id: 4, name: 'Student Name', rank: 3, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=4' },
-    { id: 5, name: 'Student Name', rank: 3, trend: 'same', photoUrl: 'https://i.pravatar.cc/150?img=5' },
-    { id: 6, name: 'Student Name', rank: 5, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=6' },
-    { id: 7, name: 'Student Name', rank: 6, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=7' },
-    { id: 8, name: 'Student Name', rank: 7, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=8' },
-    { id: 9, name: 'Student Name', rank: 8, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=9' },
-    { id: 10, name: 'Student Name', rank: 9, trend: 'up', photoUrl: 'https://i.pravatar.cc/150?img=10' }
-];
+// Placeholder image (replace with actual image source from backend)
+const placeholderImage = require("@/assets/images/character.png");
 
-// Logged-in user's rank (for highlight)
-const loggedInUserRank = 15;
+// Logged-in user's child rank (for highlight) - Will be set from API
+let loggedInChildRank = null;
 
 export default function LeaderBoard() {
+    const router = useRouter();
     const navigation = useNavigation();
-    const [rankLevel, setRankLevel] = useState('Grade - 10');
+    const [students, setStudents] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [rankLevel, setRankLevel] = useState("Class Ranks");
+    const [childData, setChildData] = useState<any>(null);
+
+    const params = useLocalSearchParams();
+    const id = params.id as string | undefined;
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                setLoading(true);
+                const response = await studentResultsAPIController.getAllClassStudentsResultsDetails(id);
+
+                if (response) {
+                    // Sort by rank before setting
+                    const sorted = [...response].sort((a, b) => a.rank - b.rank);
+                    setStudents(sorted);
+
+                    // Extract examId from the first response item (assuming all items share the same examId)
+                    const examId = response[0]?.examId;
+                    if (examId) {
+                        await fetchMyChildData(examId);
+                    } else {
+                        setError("Exam ID not found in response.");
+                    }
+                } else {
+                    setError("No results found for this exam.");
+                }
+            } catch (err) {
+                setError("Failed to load data. Please try again.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [id]);
+
+    const fetchMyChildData = async (examId: string) => {
+        try {
+            setLoading(true);
+            const response = await studentResultsAPIController.getMyChildData(examId);
+            if (response) {
+                setChildData(response);
+                loggedInChildRank = response.rank; // Update the global rank for highlighting
+            }
+        } catch (err) {
+            setError("Failed to load child data. Please try again.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    if (loading) {
+        return (
+            <View style={styles.container}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+
+    if (error) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.errorText}>{error}</Text>
+            </View>
+        );
+    }
 
     const renderTrendIcon = (trend) => {
         switch (trend) {
-            case 'up': return <Text style={{ color: 'green', fontWeight: 'bold' }}>▲</Text>;
-            case 'down': return <Text style={{ color: 'red', fontWeight: 'bold' }}>▼</Text>;
-            case 'same': return <Text style={{ color: 'purple', fontWeight: 'bold' }}>■</Text>;
-            default: return null;
+            case "up":
+                return <Text style={{ color: "green", fontWeight: "bold" }}>▲</Text>;
+            case "down":
+                return <Text style={{ color: "red", fontWeight: "bold" }}>▼</Text>;
+            case "same":
+                return <Text style={{ color: "purple", fontWeight: "bold" }}>■</Text>;
+            default:
+                return null;
         }
     };
 
     const renderItem = ({ item }) => {
-        const isUser = item.rank === loggedInUserRank;
+        const isChild = item.rank === loggedInChildRank;
         return (
-            <View style={[styles.row, isUser && styles.userRow]}>
-                <Image source={{ uri: item.photoUrl }} style={styles.photo} />
-                <Text style={[styles.name, isUser && styles.userName]}>{item.name}</Text>
+            <View style={[styles.row, isChild && styles.userRow]}>
+                <Image source={placeholderImage} style={styles.photo} />
+                <Text style={[styles.name, isChild && styles.userName]}>{item.studentName}</Text>
                 <View style={styles.rankWrapper}>
                     <Text style={styles.rank}>{item.rank}</Text>
-                    {renderTrendIcon(item.trend)}
+                    {renderTrendIcon(item.trend)} {/* Placeholder trend, adjust based on API */}
                 </View>
             </View>
         );
     };
+
+    // Move child's rank to the top if found
+    const displayStudents = childData
+        ? [
+            ...students.filter((student) => student.rank === loggedInChildRank),
+            ...students.filter((student) => student.rank !== loggedInChildRank),
+        ]
+        : students;
 
     return (
         <View style={styles.container}>
@@ -56,34 +136,6 @@ export default function LeaderBoard() {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Leader Board</Text>
                 <Ionicons name="notifications-outline" size={24} color="black" />
-            </View>
-            {/* Title */}
-
-            {/* Dropdown Placeholder */}
-            <View style={styles.gradeBox}>
-                <Text style={styles.labelDropDown}>Exam</Text>
-                <View style={styles.inputBox}>
-                    <Dropdown
-                        style={styles.dropdown}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        iconStyle={styles.iconStyle}
-                        data={[
-                            { label: 'Class Ranks', value: 'Class Ranks' },
-                            { label: 'School Ranks', value: 'School Ranks' },
-                            { label: 'Zonal Ranks', value: 'Zonal Ranks' },
-                            { label: 'District Ranks', value: 'District Ranks' },
-                            { label: 'Province Ranks', value: 'Province Ranks' },
-                            { label: 'Island Ranks', value: 'Island Ranks' },
-
-                        ]}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        value={rankLevel}
-                        onChange={item => setRankLevel(item.value)}
-                    />
-                </View>
             </View>
 
             {/* Header Row */}
@@ -95,73 +147,84 @@ export default function LeaderBoard() {
 
             {/* List */}
             <FlatList
-                data={sampleData}
-                keyExtractor={(item) => item.id.toString()}
+                data={displayStudents}
+                keyExtractor={(item) => item.studentId}
                 renderItem={renderItem}
                 showsVerticalScrollIndicator={false}
             />
+
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 15,
-        textAlign: 'center'
+    container: { flex: 1, backgroundColor: "#F6F9FC", paddingTop: 50, paddingHorizontal: 20 },
+    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 50 },
+    headerTitle: { fontSize: 18, fontWeight: "600" },
+    gradeBox: { display: "flex", marginBottom: 20 },
+    labelDropDown: { fontSize: 16, color: "#444", marginBottom: 8 },
+    placeholderStyle: { fontSize: 16, color: "#888" },
+    selectedTextStyle: { fontSize: 16, color: "#333" },
+    iconStyle: { width: 20, height: 20 },
+    inputBox: {
+        backgroundColor: "#fff",
+        padding: 12,
+        borderRadius: 8,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
     },
+    dropdown: { backgroundColor: "transparent" },
     headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+        flexDirection: "row",
+        justifyContent: "space-between",
         paddingHorizontal: 5,
-        marginBottom: 5
+        marginBottom: 5,
     },
-
+    headerList: { fontSize: 14, fontWeight: "bold", color: "#555" },
     row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#fff",
         paddingVertical: 10,
         paddingHorizontal: 8,
         marginBottom: 8,
-        borderRadius: 12
+        borderRadius: 12,
     },
     userRow: {
-        backgroundColor: '#FDCB6E'
+        backgroundColor: "#FDCB6E",
     },
     photo: {
         width: 40,
         height: 40,
         borderRadius: 20,
-        marginRight: 12
+        marginRight: 12,
     },
     name: {
         flex: 1,
-        fontWeight: '600'
+        fontWeight: "600",
     },
     userName: {
-        fontWeight: 'bold'
+        fontWeight: "bold",
     },
     rankWrapper: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5,
     },
     rank: {
-        fontWeight: 'bold',
-        marginRight: 5
+        fontWeight: "bold",
+        marginRight: 5,
     },
-    container: {flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20},
-    headerList: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center'},
-    header: {flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50},
-    headerTitle: {fontSize: 18, fontWeight: '600'},
-    gradeBox: {display:"flex",marginBottom:20 },
-    labelDropDown: { fontSize: 16, color: '#444', marginBottom: 8 },
-    placeholderStyle: { fontSize: 16, color: '#888' },
-    selectedTextStyle: { fontSize: 16, color: '#333' },
-    iconStyle: { width: 20, height: 20 },
-    classBox: { flex: 1 },
-    inputBox: { backgroundColor: '#fff', padding: 12, borderRadius: 8, elevation: 2, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4 },
-    dropdown: {backgroundColor: 'transparent' },
+    downloadButton: {
+        marginBottom: 20,
+        backgroundColor: "#445669",
+        padding: 15,
+        borderRadius: 5,
+        alignItems: "center",
+        marginTop: 20,
+    },
+    downloadButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+    errorText: { textAlign: "center", fontSize: 16, color: "red" },
 });

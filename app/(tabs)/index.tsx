@@ -35,6 +35,7 @@ export default function HomeScreen() {
     const handleLogout = async () => {
         try {
             await AsyncStorage.removeItem('user');
+            await AsyncStorage.removeItem('token');
             router.replace('/LoginScreen');
         } catch (error) {
             console.error('Error logging out:', error);
@@ -78,14 +79,14 @@ export default function HomeScreen() {
             <View style={{display: "flex", marginTop: 30, marginBottom: 50}}>
                 <TouchableOpacity
                     style={styles.specialCard}
-                    onPress={() => router.push('/')}
+                    onPress={() => router.push('/NICAndApplicationStatusScreen')}
                 >
                     <Image source={require('@/assets/images/applications.png')} style={styles.specialCardImage}/>
                     <Text style={styles.specialCardText}>Exam Applications & NIC Processing</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.specialCard}
-                    onPress={() => router.push('/')}
+                    onPress={() => router.push('/ALAdmissionDetailsScreen')}
                 >
                     <Image source={require('@/assets/images/school.png')} style={styles.specialCardImage}/>
                     <Text style={styles.specialCardText}>A/L School Selection & Admission</Text>

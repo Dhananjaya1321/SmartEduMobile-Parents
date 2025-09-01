@@ -11,12 +11,17 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import loginAPIController from "@/controllers/LoginController";
 
 export default function RegisterScreen() {
     const [username, setUsername] = useState('');
+    const [contact, setContact] = useState('');
+    const [fullName, setFullName] = useState('');
+    const [nic, setNic] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [studentRegNumber, setStudentRegNumber] = useState('');
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleRegister = async () => {
@@ -30,12 +35,38 @@ export default function RegisterScreen() {
         }
 
         try {
-            const userData = { username, email, password, studentRegNumber };
-            await AsyncStorage.setItem('user', JSON.stringify(userData));
-            Alert.alert('Success', 'Registration successful!');
-            router.replace('/');
+            setLoading(true);
+            const parentData = {
+                fullName,
+                contact,
+                nic,
+                username,
+                email,
+                password,
+                studentRegNumber,
+            };
+
+            const response = await loginAPIController.saveParent(parentData);
+
+            if (response) {
+                // if backend sends token, store it
+                if (response.token) {
+                    await AsyncStorage.setItem('token', response.token);
+                }
+
+                // store minimal user info
+                await AsyncStorage.setItem('user', JSON.stringify(response));
+
+                Alert.alert('Success', 'Registration successful!');
+                router.replace('/');
+            } else {
+                Alert.alert('Error', 'Failed to register. Please try again.');
+            }
         } catch (error) {
-            Alert.alert('Error', 'Failed to register. Please try again.');
+            console.error("Register error:", error);
+            Alert.alert('Error', 'An unexpected error occurred.');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,6 +79,33 @@ export default function RegisterScreen() {
             <ScrollView contentContainerStyle={styles.container}>
                 <Text style={styles.title}>Teacher Dashboard</Text>
                 <Text style={styles.subtitle}>Register a New Account</Text>
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Full name"
+                    placeholderTextColor="#888"
+                    value={fullName}
+                    onChangeText={setFullName}
+                    autoCapitalize="none"
+                />
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="Contact"
+                    placeholderTextColor="#888"
+                    value={contact}
+                    onChangeText={setContact}
+                    autoCapitalize="none"
+                />
+
+                <TextInput
+                    style={styles.input}
+                    placeholder="NIC"
+                    placeholderTextColor="#888"
+                    value={nic}
+                    onChangeText={setNic}
+                    autoCapitalize="none"
+                />
 
                 <TextInput
                     style={styles.input}
@@ -86,8 +144,14 @@ export default function RegisterScreen() {
                     autoCapitalize="none"
                 />
 
-                <TouchableOpacity style={styles.loginButton} onPress={handleRegister}>
-                    <Text style={styles.loginButtonText}>Register</Text>
+                <TouchableOpacity
+                    style={styles.loginButton}
+                    onPress={handleRegister}
+                    disabled={loading}
+                >
+                    <Text style={styles.loginButtonText}>
+                        {loading ? 'Registering...' : 'Register'}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity

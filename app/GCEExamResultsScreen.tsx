@@ -2,35 +2,104 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, TextInput, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import {Dropdown} from "react-native-element-dropdown";
+import { Dropdown } from 'react-native-element-dropdown';
+import studentResultsAPIController from '@/controllers/StudentResultsController';
 
 export default function GCEExamResultsScreen() {
     const router = useRouter();
-    const [exam, setExam] = useState('G.C.E O/L');
-    const [year, setYear] = useState('2016');
+    const [exam, setExam] = useState();
+    const [year, setYear] = useState();
     const [indexNumber, setIndexNumber] = useState('');
     const [results, setResults] = useState(null);
 
-    const handleSearch = () => {
-        // Simulate fetching results - replace with actual API call
-        const mockResults = {
-            exam: 'G.C.E (O/L) EXAMINATION 2016',
-            syllabus: 'NEW SYLLABUS',
-            name: 'AMIR FATHIMA AFRA',
-            indexNumber: '8700583',
-            subjects: [
-                { subject: 'ISLAM', result: 'A' },
-                { subject: 'TAMIL LANGUAGE & LITT', result: 'A' },
-                { subject: 'ENGLISH LANGUAGE', result: 'A' },
-                { subject: 'MATHEMATICS', result: 'A' },
-                { subject: 'HISTORY', result: 'A' },
-                { subject: 'SCIENCE', result: 'A' },
-                { subject: 'APPR. OF ARABIC LIT TEXT', result: 'A' },
-                { subject: 'SECOND LANGUAGE (SINHALA)', result: 'A' },
-                { subject: 'INFOR. & COMM. TECHNOLOGY', result: 'A' },
-            ],
-        };
-        setResults(mockResults);
+    const handleSearch = async () => {
+        const response = await studentResultsAPIController.getNationalLevelExamsResults(indexNumber, exam, year);
+        if (response) {
+            setResults(response);
+        } else {
+            setResults(null); // Clear results on failure
+        }
+    };
+
+    const renderOLResults = () => {
+        if (!results) return null;
+        return (
+            <View style={styles.resultsContainer}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual logo URL
+                        style={styles.logo}
+                    />
+                    <Text style={styles.resultsTitle}>{results.examName} {results.year}</Text>
+                </View>
+                <Text style={styles.resultsInfo}>Name: {results.studentName}</Text>
+                <Text style={styles.resultsInfo}>Index Number: {results.indexNumber}</Text>
+                <View style={styles.tableContainer}>
+                    <View style={styles.tableRow}>
+                        <Text style={styles.tableHeader}>Subject</Text>
+                        <Text style={styles.tableHeader}>Result</Text>
+                    </View>
+                    {results.results.map((item, index) => (
+                        <View key={index} style={styles.tableRow}>
+                            <Text style={styles.tableCell}>{item.subject}</Text>
+                            <Text style={styles.tableCell}>{item.result}</Text>
+                        </View>
+                    ))}
+                </View>
+            </View>
+        );
+    };
+
+    const renderALResults = () => {
+        if (!results) return null;
+        return (
+            <View style={styles.resultsContainer}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual logo URL
+                        style={styles.logo}
+                    />
+                    <Text style={styles.resultsTitle}>{results.examName} {results.year}</Text>
+                </View>
+                <Text style={styles.resultsInfo}>Name: {results.studentName}</Text>
+                <Text style={styles.resultsInfo}>Index Number: {results.indexNumber}</Text>
+                <Text style={styles.resultsInfo}>Stream: {results.stream || 'N/A'}</Text>
+                <Text style={styles.resultsInfo}>District Rank: {results.districtRank || 'N/A'}</Text>
+                <Text style={styles.resultsInfo}>Island Rank: {results.islandRank || 'N/A'}</Text>
+                <Text style={styles.resultsInfo}>Z-Score: {results.zscore || 'N/A'}</Text>
+                <View style={styles.tableContainer}>
+                    <View style={styles.tableRow}>
+                        <Text style={styles.tableHeader}>Subject</Text>
+                        <Text style={styles.tableHeader}>Result</Text>
+                    </View>
+                    {results.results.map((item, index) => (
+                        <View key={index} style={styles.tableRow}>
+                            <Text style={styles.tableCell}>{item.subject}</Text>
+                            <Text style={styles.tableCell}>{item.result}</Text>
+                        </View>
+                    ))}
+                </View>
+            </View>
+        );
+    };
+
+    const renderGrade5Results = () => {
+        if (!results) return null;
+        return (
+            <View style={styles.resultsContainer}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual logo URL
+                        style={styles.logo}
+                    />
+                    <Text style={styles.resultsTitle}>{results.examName} {results.year}</Text>
+                </View>
+                <Text style={styles.resultsInfo}>Name: {results.studentName}</Text>
+                <Text style={styles.resultsInfo}>Index Number: {results.indexNumber}</Text>
+                <Text style={styles.resultsInfo}>Marks: {results.marks || 'N/A'}</Text>
+                <Text style={styles.resultsInfo}>Cut-Off Marks: {results.cutOffMarks || 'N/A'}</Text>
+            </View>
+        );
     };
 
     return (
@@ -40,15 +109,12 @@ export default function GCEExamResultsScreen() {
                 <TouchableOpacity onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="black" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>G.C.E. Examinations</Text>
-                <Text style={styles.headerSubtitle}>Results</Text>
+                <Text style={styles.headerTitle}>National Examinations</Text>
                 <Ionicons name="notifications-outline" size={24} color="black" />
             </View>
 
             {/* Form */}
             <View style={styles.formContainer}>
-                <Text style={styles.label}></Text>
-
                 <View style={styles.gradeBox}>
                     <Text style={styles.labelDropDown}>Exam</Text>
                     <View style={styles.inputBox}>
@@ -58,21 +124,21 @@ export default function GCEExamResultsScreen() {
                             selectedTextStyle={styles.selectedTextStyle}
                             iconStyle={styles.iconStyle}
                             data={[
-                                { label: 'G.C.E O/L', value: 'G.C.E O/L' },
-                                { label: 'G.C.E A/L', value: 'G.C.E A/L' },
-
+                                { label: 'G.C.E. (A/L) Examination', value: 'al' },
+                                { label: 'G.C.E. (O/L) Examination', value: 'ol' },
+                                { label: 'Grade 5 Scholarship Examination', value: 'g5' },
                             ]}
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
                             value={exam}
-                            onChange={item => setExam(item.value)}
+                            onChange={(item) => setExam(item.value)}
                         />
                     </View>
                 </View>
 
                 <View style={styles.gradeBox}>
-                    <Text style={styles.labelDropDown}>year</Text>
+                    <Text style={styles.labelDropDown}>Year</Text>
                     <View style={styles.inputBox}>
                         <Dropdown
                             style={styles.dropdown}
@@ -82,19 +148,25 @@ export default function GCEExamResultsScreen() {
                             data={[
                                 { label: '2016', value: '2016' },
                                 { label: '2017', value: '2017' },
-
+                                { label: '2018', value: '2018' },
+                                { label: '2019', value: '2019' },
+                                { label: '2020', value: '2020' },
+                                { label: '2021', value: '2021' },
+                                { label: '2022', value: '2022' },
+                                { label: '2023', value: '2023' },
+                                { label: '2024', value: '2024' },
+                                { label: '2025', value: '2025' },
                             ]}
                             maxHeight={300}
                             labelField="label"
                             valueField="value"
                             value={year}
-                            onChange={item => setYear(item.value)}
+                            onChange={(item) => setYear(item.value)}
                         />
                     </View>
                 </View>
 
-
-                <Text style={styles.label}>Index number</Text>
+                <Text style={styles.label}>Index Number</Text>
                 <TextInput
                     style={styles.input}
                     value={indexNumber}
@@ -110,51 +182,22 @@ export default function GCEExamResultsScreen() {
 
             {/* Results */}
             {results && (
-                <View style={styles.resultsContainer}>
-                    <View style={styles.logoContainer}>
-                        <Image
-                            source={{ uri: 'https://via.placeholder.com/50' }} // Replace with actual logo URL
-                            style={styles.logo}
-                        />
-                        <Text style={styles.resultsTitle}>{results.exam}</Text>
-                    </View>
-                    <Text style={styles.resultsInfo}>Examinee : {results.exam}</Text>
-                    <Text style={styles.resultsInfo}>Syllabus : {results.syllabus}</Text>
-                    <Text style={styles.resultsInfo}>Name : {results.name}</Text>
-                    <Text style={styles.resultsInfo}>Index Number : {results.indexNumber}</Text>
-
-                    <View style={styles.tableContainer}>
-                        <View style={styles.tableRow}>
-                            <Text style={styles.tableHeader}>Subject</Text>
-                            <Text style={styles.tableHeader}>Result</Text>
-                        </View>
-                        {results.subjects.map((item, index) => (
-                            <View key={index} style={styles.tableRow}>
-                                <Text style={styles.tableCell}>{item.subject}</Text>
-                                <Text style={styles.tableCell}>{item.result}</Text>
-                            </View>
-                        ))}
-                    </View>
-                </View>
+                <>
+                    {results.examName === 'G.C.E. (O/L) Examination' && renderOLResults()}
+                    {results.examName === 'G.C.E. (A/L) Examination' && renderALResults()}
+                    {results.examName === 'Grade 5 Scholarship Examination' && renderGrade5Results()}
+                </>
             )}
-
-            {/* Download Button */}
-            <TouchableOpacity style={styles.downloadButton}>
-                <Text style={styles.downloadText}>Download Report</Text>
-            </TouchableOpacity>
         </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#F6F9FC', padding: 20 },
-    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 },
-    headerTitle: { fontSize: 20, fontWeight: 'bold' },
-    headerSubtitle: { fontSize: 14, color: 'gray' },
+    container: { flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 50 },
+    headerTitle: { fontSize: 18, fontWeight: '600' },
     formContainer: { marginBottom: 20 },
     label: { fontSize: 14, color: '#555', marginBottom: 5 },
-    pickerContainer: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, marginBottom: 15 },
-    picker: { height: 50 },
     input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, padding: 10, marginBottom: 15 },
     searchButton: { backgroundColor: '#607D8B', padding: 15, borderRadius: 10, alignItems: 'center' },
     searchText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
@@ -169,12 +212,11 @@ const styles = StyleSheet.create({
     tableCell: { flex: 1, textAlign: 'center' },
     downloadButton: { backgroundColor: '#607D8B', padding: 15, borderRadius: 10, alignItems: 'center' },
     downloadText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-    gradeBox: {display:"flex",marginBottom:20 },
+    gradeBox: { display: 'flex', marginBottom: 20 },
     labelDropDown: { fontSize: 16, color: '#444', marginBottom: 8 },
     placeholderStyle: { fontSize: 16, color: '#888' },
     selectedTextStyle: { fontSize: 16, color: '#333' },
     iconStyle: { width: 20, height: 20 },
-    classBox: { flex: 1 },
     inputBox: { backgroundColor: '#fff', padding: 12, borderRadius: 8, elevation: 2, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 4 },
-    dropdown: {backgroundColor: 'transparent' },
+    dropdown: { backgroundColor: 'transparent' },
 });

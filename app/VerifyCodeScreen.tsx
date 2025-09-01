@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
     Text,
     TextInput,
@@ -8,18 +8,27 @@ import {
     ImageBackground,
     Alert
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import {useLocalSearchParams, useRouter} from 'expo-router';
 
 export default function VerifyCodeScreen() {
-    const [otp, setOtp] = useState('');
+    const [otpInput, setOtpInput] = useState('');
     const router = useRouter();
+    const {email, otp} = useLocalSearchParams<{ email: string, otp: string }>(); // email passed from VerifyCodeScreen
 
     const handleSubmit = () => {
-        if (!otp || otp.length !== 6) {
+        if (!otpInput || otpInput.length !== 6) {
             Alert.alert('Error', 'Please enter a valid 6-digit code');
             return;
         }
-        router.push('/ChangePasswordScreen');
+
+        if (otp===otpInput){
+            router.push({
+                pathname: '/ChangePasswordScreen',
+                params: {email}
+            });
+        }else {
+            Alert.alert('Error', 'Please enter a valid 6-digit code');
+        }
     };
 
     return (
@@ -38,8 +47,8 @@ export default function VerifyCodeScreen() {
                     style={styles.input}
                     placeholder="OTP Code"
                     placeholderTextColor="#888"
-                    value={otp}
-                    onChangeText={setOtp}
+                    value={otpInput}
+                    onChangeText={setOtpInput}
                     keyboardType="number-pad"
                     autoCapitalize="none"
                 />

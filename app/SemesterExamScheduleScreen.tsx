@@ -3,71 +3,49 @@ import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import {useNavigation} from "expo-router";
 import {Dropdown} from "react-native-element-dropdown";
+import examAPIController from "@/controllers/ExamController";
 
 export default function SemesterExamScheduleScreen() {
     const navigation = useNavigation();
-    const [examData, setExamData] = useState([]);
-    const [expandedSubjects, setExpandedSubjects] = useState({});
-    const [semester, setSemester] = useState('');
+    const [examData, setExamData] = useState<any[]>([]);
+    const [expandedSubjects, setExpandedSubjects] = useState<{ [key: string]: boolean }>({});
+
+    const fetchData = async () => {
+        try {
+            const response = await examAPIController.getAllTermExams();
+
+            if (response) {
+                // transform backend data into UI-friendly structure
+                const formatted = response.map((exam: any) => ({
+                    examName: exam.examName,
+                    grade: exam.grade,
+                    year: exam.year,
+                    exams: exam.timetable.map((t: any) => ({
+                        date: t.date,
+                        time: `${t.startTime} - ${t.endTime}`,
+                        subject: t.subject,
+                        paper: t.paper
+                    }))
+                }));
+
+                setExamData(formatted);
+            }
+        } catch (err) {
+            console.error("Failed to fetch exams", err);
+        }
+    };
 
     useEffect(() => {
-        // TODO: API CALL - Replace sample data with real API call
-        // fetch('YOUR_API_URL')
-        //   .then(res => res.json())
-        //   .then(data => setExamData(data));
-
-        setExamData([
-            {
-                grade: 'Grade 13 - Maths',
-                exams: []
-            },
-            {
-                grade: 'Grade 13 - Bio Science',
-                exams: [
-                    { date: 'Monday, 25th November', time: '08:30 A.M. - 11:40 A.M.', name: 'Combined Mathematics I' },
-                    { date: 'Monday, 26th November', time: '08:30 A.M. - 11:40 A.M.', name: 'Combined Mathematics II' },
-                    { date: 'Monday, 27th November', time: '08:30 A.M. - 11:40 A.M.', name: 'Physics I' },
-                    { date: 'Monday, 28th November', time: '08:30 A.M. - 11:40 A.M.', name: 'Physics II' }
-                ]
-            },
-            {
-                grade: 'Grade 13 - Commerce',
-                exams: []
-            },
-            {
-                grade: 'Grade 13 - Art',
-                exams: []
-            },
-            {
-                grade: 'Grade 13 - Technology',
-                exams: []
-            },
-            {
-                grade: 'Grade 12 - Maths',
-                exams: []
-            },
-            {
-                grade: 'Grade 12 - Bio Science',
-                exams: []
-            },
-            {
-                grade: 'Grade 12 - Commerce',
-                exams: []
-            },
-        ]);
+        fetchData();
     }, []);
 
-    const toggleExpand = (subject) => {
+    const toggleExpand = (examName: string) => {
         setExpandedSubjects((prev) => ({
             ...prev,
-            [subject]: !prev[subject]
+            [examName]: !prev[examName]
         }));
     };
 
-    const handleSearch = () => {
-        // TODO: API CALL - trigger download from backend
-        alert('Download timetable from backend here');
-    };
 
     return (
         <ScrollView style={styles.container}>
@@ -80,62 +58,39 @@ export default function SemesterExamScheduleScreen() {
                 <Ionicons name="notifications-outline" size={24} color="#000" />
             </View>
 
-            <View style={styles.classAndGradeBox}>
-                <Text style={styles.label}>Class</Text>
-                <View style={styles.inputBox}>
-                    <Dropdown
-                        style={styles.dropdown}
-                        placeholderStyle={styles.placeholderStyle}
-                        selectedTextStyle={styles.selectedTextStyle}
-                        iconStyle={styles.iconStyle}
-                        data={[
-                            {label: 'First Semester', value: 'First Semester'},
-                            {label: 'Second Semester', value: 'Second Semester'},
-                            {label: 'Final Semester', value: 'Final Semester'},
-                        ]}
-                        maxHeight={300}
-                        labelField="label"
-                        valueField="value"
-                        placeholder="Select Semester"
-                        value={semester}
-                        onChange={item => setSemester(item.value)}
-                    />
-                </View>
-            </View>
 
-
-            {/* Search Button */}
-            <TouchableOpacity style={styles.downloadButton} onPress={handleSearch}>
-                <Text style={styles.downloadText}>Search</Text>
-            </TouchableOpacity>
 
             {/* Subject Stream */}
             <ScrollView>
-                <Text style={styles.subjectStreamTitle}>Grade</Text>
+                <Text style={styles.subjectStreamTitle}>Exam Name</Text>
 
                 {examData.map((item, index) => (
                     <View key={index} style={styles.subjectBox}>
                         <TouchableOpacity
                             style={styles.subjectHeader}
-                            onPress={() => toggleExpand(item.grade)}
+                            onPress={() => toggleExpand(item.examName)}
                         >
-                            <Text style={styles.subjectText}>{item.grade}</Text>
+                            <Text style={styles.subjectText}>
+                                {item.examName} (Grade {item.grade}, {item.year})
+                            </Text>
                             <Ionicons
-                                name={expandedSubjects[item.grade] ? 'remove-circle-outline' : 'add-circle-outline'}
+                                name={expandedSubjects[item.examName] ? 'remove-circle-outline' : 'add-circle-outline'}
                                 size={20}
                                 color="#666"
                             />
                         </TouchableOpacity>
 
-                        {/* Expanded Exams */}
-                        {expandedSubjects[item.grade] && item.exams.length > 0 && (
+                        {/* Expanded timetable */}
+                        {expandedSubjects[item.examName] && item.exams.length > 0 && (
                             <View style={styles.examList}>
                                 {item.exams.map((exam, i) => (
                                     <View key={i} style={styles.examItem}>
                                         <Text style={styles.examDate}>
                                             {exam.date} | ({exam.time})
                                         </Text>
-                                        <Text style={styles.examName}>{exam.name}</Text>
+                                        <Text style={styles.examName}>
+                                            {exam.subject} ({exam.paper})
+                                        </Text>
                                     </View>
                                 ))}
                             </View>
