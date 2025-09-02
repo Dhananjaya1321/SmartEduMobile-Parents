@@ -208,8 +208,6 @@ export default function ALAdmissionScreen() {
             </View>
             {/*add selected 5 schools display table here and add button*/}
             <View style={styles.gradeBox}>
-                <Text style={styles.labelDropDown}>Selected Schools</Text>
-
                 {/* Add Button */}
                 <TouchableOpacity
                     style={styles.addButton}
@@ -218,6 +216,7 @@ export default function ALAdmissionScreen() {
                     <Text style={styles.addButtonText}>Add School</Text>
                 </TouchableOpacity>
 
+                <Text style={styles.labelDropDown}>Selected Schools</Text>
                 {/* Table */}
                 <View style={styles.table}>
                     <View style={styles.tableHeader}>

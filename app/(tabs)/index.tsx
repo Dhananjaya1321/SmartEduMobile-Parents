@@ -5,7 +5,7 @@ import {useRouter} from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
-const teacherName = "Teacher’s Name";
+const teacherName = "Parent";
 
 const features = [
     {label: 'Attendance', image: require('@/assets/images/attendance.png'), route: '/AttendanceScreen'},
@@ -60,6 +60,7 @@ export default function HomeScreen() {
                 data={formatData(features, 2)}
                 keyExtractor={(item, index) => index.toString()}
                 numColumns={2}
+                scrollEnabled={false}
                 renderItem={({item}) => {
                     if (item.empty) {
                         return <View style={[styles.card, styles.invisibleCard]}/>;

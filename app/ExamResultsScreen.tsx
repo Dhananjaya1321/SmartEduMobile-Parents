@@ -38,6 +38,7 @@ export default function ExamResultsScreen() {
                 data={formatData(features, 2)}
                 keyExtractor={(item, index) => index.toString()}
                 numColumns={2}
+                scrollEnabled={false}
                 renderItem={({item}) => {
                     if (item.empty) {
                         return <View style={[styles.card, styles.invisibleCard]}/>;
