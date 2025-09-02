@@ -77,8 +77,7 @@ export default function RegisterScreen() {
             resizeMode="cover"
         >
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.title}>Teacher Dashboard</Text>
-                <Text style={styles.subtitle}>Register a New Account</Text>
+                <Text style={styles.title}>Register a New Account</Text>
 
                 <TextInput
                     style={styles.input}
@@ -181,7 +180,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 10,
+        marginVertical: 15,
         color: '#fff',
     },
     subtitle: {

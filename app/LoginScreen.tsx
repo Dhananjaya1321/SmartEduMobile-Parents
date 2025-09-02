@@ -78,7 +78,7 @@ export default function LoginScreen() {
             resizeMode="cover"
         >
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.title}>Parents Dashboard</Text>
+                <Text style={styles.title}>Parents Login</Text>
                 <Text style={styles.subtitle}>Please login to continue</Text>
 
                 <TextInput
