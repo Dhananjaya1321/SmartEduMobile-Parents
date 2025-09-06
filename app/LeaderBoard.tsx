@@ -114,7 +114,6 @@ export default function LeaderBoard() {
                 <Text style={[styles.name, isChild && styles.userName]}>{item.studentName}</Text>
                 <View style={styles.rankWrapper}>
                     <Text style={styles.rank}>{item.rank}</Text>
-                    {renderTrendIcon(item.trend)} {/* Placeholder trend, adjust based on API */}
                 </View>
             </View>
         );
@@ -147,6 +146,7 @@ export default function LeaderBoard() {
 
             {/* List */}
             <FlatList
+                scrollEnabled={false}
                 data={displayStudents}
                 keyExtractor={(item) => item.studentId}
                 renderItem={renderItem}

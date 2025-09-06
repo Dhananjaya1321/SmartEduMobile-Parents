@@ -68,11 +68,6 @@ export default function ExaminationsDetailsScreen() {
                         <Image source={require('@/assets/images/exams.png')} style={styles.cardImage}/>
                         <Text style={styles.cardText}>View Semester Exams</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.card} onPress={() => {
-                    }}>
-                        <Image source={require('@/assets/images/exams.png')} style={styles.cardImage}/>
-                        <Text style={styles.cardText}>Create Urgent Exams </Text>
-                    </TouchableOpacity>
                 </View>
             </View>
 

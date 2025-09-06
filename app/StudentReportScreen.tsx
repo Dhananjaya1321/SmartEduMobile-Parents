@@ -217,10 +217,10 @@ export default function StudentReportScreen() {
                 style={{ marginVertical: 20, borderRadius: 10 }}
             />
 
-            {/* Download Button */}
+         {/*    Download Button
             <TouchableOpacity style={styles.downloadBtn}>
                 <Text style={{ color: 'white', fontWeight: 'bold' }}>Download Report</Text>
-            </TouchableOpacity>
+            </TouchableOpacity>*/}
         </ScrollView>
     );
 }

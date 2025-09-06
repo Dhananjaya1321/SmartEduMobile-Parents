@@ -78,6 +78,7 @@ export default function NICAndApplicationStatusScreen() {
             <FlatList
                 data={applications}
                 keyExtractor={(item) => item.id}
+                scrollEnabled={false}
                 renderItem={({ item }) => (
                     <View style={styles.applicationItem}>
                         <Text style={styles.appName}>
@@ -97,9 +98,9 @@ export default function NICAndApplicationStatusScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F6F9FC", paddingTop: 50, paddingHorizontal: 20 },
-    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 30 },
-    headerTitle: { fontSize: 18, fontWeight: "600", textAlign: "center", marginHorizontal: 20 },
+    container: { flex: 1, backgroundColor: '#F6F9FC', paddingTop: 50, paddingHorizontal: 20 },
+    header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 30 },
+    headerTitle: { fontSize: 18, fontWeight: '600' },
     applicationItem: {
         backgroundColor: "#fff",
         padding: 15,
