@@ -5,6 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     FlatList,
+    ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -28,40 +29,52 @@ export default function AdmissionStatusScreen() {
         }
     };
 
-    const handleAccept =async (id) => {
-        console.log("Accepted:", id);
+    const handleAccept = async (id) => {
         const response = await alAdmissionAPIController.acceptTheALApplication(id);
-        if (response){
-            alert("Accepted successfully")
-            fetchAdmissions()
+        if (response) {
+            alert("Accepted successfully");
+            fetchAdmissions();
         }
     };
 
-    const handleReject =async (id) => {
-        console.log("Rejected:", id);
+    const handleReject = async (id) => {
         const response = await alAdmissionAPIController.rejectTheALApplication(id);
-        if (response){
-            alert("Rejected successfully")
-            fetchAdmissions()
+        if (response) {
+            alert("Rejected successfully");
+            fetchAdmissions();
         }
     };
 
     const renderItem = ({ item }) => {
         const isStudentAccepted = item.status === "STUDENT_ACCEPTED";
         const isStudentRejected = item.status === "STUDENT_REJECTED";
-        const showButtons = item.status === "PENDING" || item.status === "SCHOOL_ACCEPTED";
+        const showButtons = item.status === "SCHOOL_ACCEPTED";
 
         return (
             <View
                 style={[
                     styles.card,
-                    isStudentAccepted && { backgroundColor: "#d4edda", borderColor: "#28a745" }, // green
-                    isStudentRejected && { backgroundColor: "#f8d7da", borderColor: "#dc3545" }, // red
+                    isStudentAccepted && { backgroundColor: "#d4edda", borderColor: "#28a745" },
+                    isStudentRejected && { backgroundColor: "#f8d7da", borderColor: "#dc3545" },
                 ]}
             >
                 <Text style={styles.schoolName}>{item.schoolName}</Text>
                 <Text style={styles.infoText}>Stream: {item.subjectStream}</Text>
                 <Text style={styles.infoText}>Status: {item.status}</Text>
+
+                {/* Score Breakdown */}
+                <View style={styles.breakdown}>
+                    <Text style={styles.breakdownTitle}>Score Calculation</Text>
+                    <Text style={styles.breakdownText}>
+                        🎓 O/L Results: A=6, B=5, C=4, S=2, W=0
+                    </Text>
+                    <Text style={styles.breakdownText}>
+                        🏆 Achievements: National 1/2/3=6, Provincial 1/2/3=5, Zonal 1/2/3=4
+                    </Text>
+                    <Text style={styles.breakdownText}>
+                        📍 Residence: Province=2, District=3, Zonal=4
+                    </Text>
+                </View>
 
                 <View style={styles.scoreRow}>
                     <Text style={styles.scoreText}>Total Score: {item.totalScore}</Text>
@@ -119,10 +132,24 @@ export default function AdmissionStatusScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#F6F9FC", paddingTop: 50, paddingHorizontal: 20 },
-    header: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginBottom: 40 },
+    container: {
+        flex: 1,
+        backgroundColor: "#F6F9FC",
+        paddingTop: 50,
+        paddingHorizontal: 20,
+    },
+    header: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 40,
+    },
     headerTitle: { fontSize: 18, fontWeight: "600" },
-    totalView: { flexDirection: "row", justifyContent: "space-between", marginBottom: 20 },
+    totalView: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: 20,
+    },
     totalText: { fontSize: 14, color: "#777" },
     totalCount: { fontSize: 16, fontWeight: "bold" },
     list: { paddingBottom: 20 },
@@ -134,12 +161,48 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         padding: 15,
     },
-    schoolName: { fontSize: 18, fontWeight: "bold", marginBottom: 5, color: "#000" },
+    schoolName: {
+        fontSize: 18,
+        fontWeight: "bold",
+        marginBottom: 5,
+        color: "#000",
+    },
     infoText: { fontSize: 14, color: "#333", marginBottom: 3 },
-    scoreRow: { flexDirection: "row", justifyContent: "space-between", marginVertical: 8 },
+    breakdown: {
+        marginTop: 10,
+        padding: 8,
+        backgroundColor: "#f1f9ff",
+        borderRadius: 6,
+    },
+    breakdownTitle: {
+        fontSize: 14,
+        fontWeight: "600",
+        marginBottom: 4,
+        color: "#0077b6",
+    },
+    breakdownText: {
+        fontSize: 12,
+        color: "#333",
+        marginBottom: 2,
+    },
+    scoreRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginVertical: 8,
+    },
     scoreText: { fontSize: 14, fontWeight: "500" },
-    actions: { flexDirection: "row", justifyContent: "space-between", marginTop: 10 },
-    button: { flex: 1, padding: 10, borderRadius: 5, alignItems: "center", marginHorizontal: 5 },
+    actions: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 10,
+    },
+    button: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 5,
+        alignItems: "center",
+        marginHorizontal: 5,
+    },
     acceptButton: { backgroundColor: "#4CAF50" },
     rejectButton: { backgroundColor: "#F44336" },
     buttonText: { color: "#fff", fontWeight: "bold" },
