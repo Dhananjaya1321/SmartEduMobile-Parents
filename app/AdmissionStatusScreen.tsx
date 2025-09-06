@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, {useState, useEffect} from "react";
 import {
     View,
     Text,
@@ -7,8 +7,8 @@ import {
     FlatList,
     ScrollView,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import {Ionicons} from "@expo/vector-icons";
+import {router} from "expo-router";
 import alAdmissionAPIController from "@/controllers/ALAdmissionAPIController";
 
 export default function AdmissionStatusScreen() {
@@ -45,7 +45,7 @@ export default function AdmissionStatusScreen() {
         }
     };
 
-    const renderItem = ({ item }) => {
+    const renderItem = ({item}) => {
         const isStudentAccepted = item.status === "STUDENT_ACCEPTED";
         const isStudentRejected = item.status === "STUDENT_REJECTED";
         const showButtons = item.status === "SCHOOL_ACCEPTED";
@@ -54,8 +54,8 @@ export default function AdmissionStatusScreen() {
             <View
                 style={[
                     styles.card,
-                    isStudentAccepted && { backgroundColor: "#d4edda", borderColor: "#28a745" },
-                    isStudentRejected && { backgroundColor: "#f8d7da", borderColor: "#dc3545" },
+                    isStudentAccepted && {backgroundColor: "#d4edda", borderColor: "#28a745"},
+                    isStudentRejected && {backgroundColor: "#f8d7da", borderColor: "#dc3545"},
                 ]}
             >
                 <Text style={styles.schoolName}>{item.schoolName}</Text>
@@ -66,13 +66,30 @@ export default function AdmissionStatusScreen() {
                 <View style={styles.breakdown}>
                     <Text style={styles.breakdownTitle}>Score Calculation</Text>
                     <Text style={styles.breakdownText}>
-                        🎓 O/L Results: A=6, B=5, C=4, S=2, W=0
+                        🎓 O/L Results
+                        <Text style={{display:"flex",flexDirection:"column",paddingLeft:25}}>
+                            <Text>A=6</Text>
+                            <Text>B=5</Text>
+                            <Text>C=4</Text>
+                            <Text>S=2</Text>
+                            <Text>W=0</Text>
+                        </Text>
                     </Text>
                     <Text style={styles.breakdownText}>
-                        🏆 Achievements: National 1/2/3=6, Provincial 1/2/3=5, Zonal 1/2/3=4
+                        🏆 Achievements you achieved in the 2 years you studied for O/L
+                        <Text style={{display:"flex",flexDirection:"column",paddingLeft:25}}>
+                            <Text>National 1st/2nd/3rd=6</Text>
+                            <Text>Provincial 1st/2nd/3rd=5</Text>
+                            <Text>Zonal 1st/2nd/3rd=4</Text>
+                        </Text>
                     </Text>
                     <Text style={styles.breakdownText}>
-                        📍 Residence: Province=2, District=3, Zonal=4
+                        📍 Residency based on your current school
+                        <Text style={{display:"flex",flexDirection:"column",paddingLeft:25}}>
+                            <Text>Province=2</Text>
+                            <Text>District=3</Text>
+                            <Text>Zonal=4</Text>
+                        </Text>
                     </Text>
                 </View>
 
@@ -105,10 +122,10 @@ export default function AdmissionStatusScreen() {
         <View>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={24} color="black" />
+                    <Ionicons name="arrow-back" size={24} color="black"/>
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>A/L Admissions</Text>
-                <Ionicons name="notifications-outline" size={24} color="black" />
+                <Ionicons name="notifications-outline" size={24} color="black"/>
             </View>
 
             <View style={styles.totalView}>
@@ -144,15 +161,15 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginBottom: 40,
     },
-    headerTitle: { fontSize: 18, fontWeight: "600" },
+    headerTitle: {fontSize: 18, fontWeight: "600"},
     totalView: {
         flexDirection: "row",
         justifyContent: "space-between",
         marginBottom: 20,
     },
-    totalText: { fontSize: 14, color: "#777" },
-    totalCount: { fontSize: 16, fontWeight: "bold" },
-    list: { paddingBottom: 20 },
+    totalText: {fontSize: 14, color: "#777"},
+    totalCount: {fontSize: 16, fontWeight: "bold"},
+    list: {paddingBottom: 20},
     card: {
         borderColor: "#00d0ff",
         borderWidth: 1,
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
         marginBottom: 5,
         color: "#000",
     },
-    infoText: { fontSize: 14, color: "#333", marginBottom: 3 },
+    infoText: {fontSize: 14, color: "#333", marginBottom: 3},
     breakdown: {
         marginTop: 10,
         padding: 8,
@@ -190,7 +207,7 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
         marginVertical: 8,
     },
-    scoreText: { fontSize: 14, fontWeight: "500" },
+    scoreText: {fontSize: 14, fontWeight: "500"},
     actions: {
         flexDirection: "row",
         justifyContent: "space-between",
@@ -203,8 +220,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         marginHorizontal: 5,
     },
-    acceptButton: { backgroundColor: "#4CAF50" },
-    rejectButton: { backgroundColor: "#F44336" },
-    buttonText: { color: "#fff", fontWeight: "bold" },
-    disabled: { backgroundColor: "#ccc" },
+    acceptButton: {backgroundColor: "#4CAF50"},
+    rejectButton: {backgroundColor: "#F44336"},
+    buttonText: {color: "#fff", fontWeight: "bold"},
+    disabled: {backgroundColor: "#ccc"},
 });
